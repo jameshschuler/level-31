@@ -1,0 +1,8 @@
+node_modules
+dist
+dist-ssr
+.tanstack
+.vinxi
+.output
+drizzle
+package-lock.json
