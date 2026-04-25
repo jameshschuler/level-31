@@ -8,9 +8,14 @@ export default function Header() {
         <Link
           to="/"
           search={{ week: undefined }}
-          className="order-1 mr-auto text-base font-bold tracking-tight text-(--sea-ink) no-underline sm:text-lg"
+          className="order-1 mr-auto font-bold tracking-tight text-(--sea-ink) no-underline"
+          style={{
+            fontFamily: '"Fredoka", "Nunito", sans-serif',
+            fontSize: "1.25rem",
+            letterSpacing: "-0.01em",
+          }}
         >
-          Level 31
+          Level 31 🏃
         </Link>
 
         <div className="order-2 ml-auto flex items-center gap-1.5 sm:ml-0 sm:gap-2">
