@@ -11,65 +11,45 @@ const seedTeams = [
 ] as const;
 
 const seedPlayers = [
-  { username: "lauras", displayName: "Laura S", teamSlug: "birds" },
-  {
-    username: "laurasnyder",
-    displayName: "Laura Snyder",
-    teamSlug: "dogs",
-  },
-  {
-    username: "robsnyder",
-    displayName: "Rob Snyder",
-    teamSlug: "cats",
-  },
   {
     username: "jamesschuler",
     displayName: "James Schuler",
-    teamSlug: "pandas",
+    teamSlug: "birds",
+  },
+  { username: "lucyschuler", displayName: "Lucy Schuler", teamSlug: "birds" },
+  { username: "samrueby", displayName: "Sam Rueby", teamSlug: "birds" },
+  { username: "laurasnyder", displayName: "Laura Snyder", teamSlug: "cats" },
+  {
+    username: "girlsamruebot",
+    displayName: "GirlSam RueBot",
+    teamSlug: "cats",
+  },
+  {
+    username: "jessicaschuler",
+    displayName: "Jessica Schuler",
+    teamSlug: "cats",
+  },
+  {
+    username: "brendanstevenson",
+    displayName: "Brendan Stevenson",
+    teamSlug: "rabbits",
   },
   {
     username: "timothyschuler",
     displayName: "Timothy Schuler",
     teamSlug: "rabbits",
   },
-  {
-    username: "brendanstevenson",
-    displayName: "Brendan Stevenson",
-    teamSlug: "cats",
-  },
-  { username: "samrueby", displayName: "Sam Rueby", teamSlug: "pandas" },
-  {
-    username: "girlsamruebot",
-    displayName: "GirlSam RueBot",
-    teamSlug: "pandas",
-  },
-  {
-    username: "jessicaschuler",
-    displayName: "Jessica Schuler",
-    teamSlug: "dogs",
-  },
-  { username: "sandyly", displayName: "Sandy Ly", teamSlug: "rabbits" },
+  { username: "lauras", displayName: "Laura S", teamSlug: "rabbits" },
+  { username: "robsnyder", displayName: "Rob Snyder", teamSlug: "dogs" },
+  { username: "bobbyhoward", displayName: "Bobby Howard", teamSlug: "dogs" },
   {
     username: "patrickmaney",
     displayName: "Patrick Maney",
-    teamSlug: "birds",
+    teamSlug: "dogs",
   },
-  { username: "bryanw", displayName: "Bryan W", teamSlug: "dogs" },
-  {
-    username: "bobbyhoward",
-    displayName: "Bobby Howard",
-    teamSlug: "rabbits",
-  },
-  {
-    username: "abbyschuler",
-    displayName: "Abby Schuler",
-    teamSlug: "cats",
-  },
-  {
-    username: "lucyschuler",
-    displayName: "Lucy Schuler",
-    teamSlug: "birds",
-  },
+  { username: "sandyly", displayName: "Sandy Ly", teamSlug: "pandas" },
+  { username: "abbyschuler", displayName: "Abby Schuler", teamSlug: "pandas" },
+  { username: "bryanw", displayName: "Bryan W", teamSlug: "pandas" },
 ] as const;
 
 export async function seedDb() {
