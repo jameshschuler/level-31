@@ -23,3 +23,15 @@ export async function clearDb() {
 
   console.log("Database cleared.");
 }
+
+export async function clearDbExceptTeamsAndPlayers() {
+  await db.transaction(async (tx) => {
+    await tx.delete(teamScoreSummaries);
+    await tx.delete(teamDailyScores);
+    await tx.delete(playerDailySteps);
+    await tx.delete(playerStepSummaries);
+    await tx.delete(stepReports);
+  });
+
+  console.log("Cleared report and score data. Teams and players were kept.");
+}

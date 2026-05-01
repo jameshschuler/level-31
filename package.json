@@ -6,6 +6,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
+    "start": "vite preview",
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "preview": "vite preview",
@@ -19,6 +20,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/db/seed-runner.ts",
+    "db:seed:teams-players": "tsx src/db/seed-teams-and-players-runner.ts",
     "db:clear": "tsx src/db/clear-db-runner.ts",
     "db:reseed": "tsx src/db/reseed.ts"
   },
