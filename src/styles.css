@@ -13,19 +13,19 @@
 
 :root {
   --sea-ink: #064e3b;
-  --sea-ink-soft: #047857;
+  --sea-ink-soft: #035e3a;
   --lagoon: #6ee7b7;
-  --lagoon-deep: #10b981;
-  --lagoon-deep-hover: #059669;
-  --palm: #047857;
+  --lagoon-deep: #0a7a58;
+  --lagoon-deep-hover: #085e43;
+  --palm: #035e3a;
   --sand: #ecfdf5;
   --foam: #f0fdf4;
   --gold: #d97706;
   --surface: rgba(255, 255, 255, 0.78);
   --surface-strong: rgba(255, 255, 255, 0.94);
-  --line: rgba(16, 185, 129, 0.14);
+  --line: rgba(10, 122, 88, 0.20);
   --inset-glint: rgba(255, 255, 255, 0.9);
-  --kicker: #10b981;
+  --kicker: #0a7a58;
   --bg-base: #ecfdf5;
   --header-bg: rgba(240, 253, 250, 0.88);
   --chip-bg: rgba(255, 255, 255, 0.85);
