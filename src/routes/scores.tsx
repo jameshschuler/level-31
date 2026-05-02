@@ -47,7 +47,7 @@ function ScoresPage() {
                 {day.rows.map((row) => (
                   <div
                     key={`${day.stepDate}-${row.teamId}`}
-                    className="rounded-xl border border-(--line)/70 bg-white/70 p-4"
+                    className="rounded-xl border border-(--line)/70 bg-(--card-bg) p-4"
                   >
                     <div className="mb-2 flex items-center justify-between gap-3">
                       <p className="m-0 text-base font-semibold text-(--sea-ink)">

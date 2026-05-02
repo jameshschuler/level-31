@@ -154,7 +154,7 @@ function HomePage() {
           <button
             type="button"
             onClick={() => setWeek(addDays(weekStart, -7))}
-            className="w-full rounded-full border border-(--line) bg-white/80 px-4 py-2.5 text-sm font-semibold text-(--sea-ink) transition hover:-translate-y-0.5 sm:w-auto"
+            className="w-full rounded-full border border-(--line) bg-(--input-bg) px-4 py-2.5 text-sm font-semibold text-(--sea-ink) transition hover:-translate-y-0.5 sm:w-auto"
           >
             Previous Week
           </button>
@@ -162,7 +162,7 @@ function HomePage() {
             type="button"
             onClick={() => setWeek(addDays(weekStart, 7))}
             disabled={isCurrentWeek}
-            className="w-full rounded-full border border-(--line) bg-white/80 px-4 py-2.5 text-sm font-semibold text-(--sea-ink) transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            className="w-full rounded-full border border-(--line) bg-(--input-bg) px-4 py-2.5 text-sm font-semibold text-(--sea-ink) transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             Next Week
           </button>
@@ -218,11 +218,11 @@ function HomePage() {
                 {day.rows.map((row, rank) => (
                   <div
                     key={`${day.stepDate}-${row.teamId}`}
-                    className="rounded-xl border border-(--line) bg-white/70 px-4 py-3"
+                    className="rounded-xl border border-(--line) bg-(--card-bg) px-4 py-3"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-white text-(--lagoon-deep)">
+                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-(--card-bg) text-(--lagoon-deep)">
                           <TeamIcon iconName={row.teamIcon} />
                         </span>
                         <p className="m-0 text-base font-semibold text-(--sea-ink)">

@@ -65,55 +65,61 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --card-bg: rgba(255, 255, 255, 0.70);
+  --input-bg: rgba(255, 255, 255, 0.80);
 }
 
 :root[data-theme="dark"] {
-  --sea-ink: #d1fae5;
-  --sea-ink-soft: #a7f3d0;
+  --sea-ink: #ecfdf5;
+  --sea-ink-soft: #bbf7d0;
   --lagoon: #86efac;
-  --lagoon-deep: #4ade80;
-  --lagoon-deep-hover: #22c55e;
+  --lagoon-deep: #34d399;
+  --lagoon-deep-hover: #10b981;
   --palm: #10b981;
   --sand: #064e3b;
   --foam: #022c1f;
   --gold: #fcd34d;
-  --surface: rgba(6, 78, 59, 0.82);
-  --surface-strong: rgba(5, 46, 34, 0.94);
-  --line: rgba(167, 243, 208, 0.18);
-  --inset-glint: rgba(134, 239, 172, 0.12);
-  --kicker: #86efac;
-  --bg-base: #0f2f26;
-  --header-bg: rgba(6, 22, 18, 0.88);
-  --chip-bg: rgba(5, 46, 34, 0.92);
-  --chip-line: rgba(167, 243, 208, 0.24);
+  --surface: rgba(15, 90, 68, 0.75);
+  --surface-strong: rgba(10, 60, 44, 0.92);
+  --line: rgba(167, 243, 208, 0.28);
+  --inset-glint: rgba(134, 239, 172, 0.18);
+  --kicker: #6ee7b7;
+  --bg-base: #0a1f1a;
+  --header-bg: rgba(6, 22, 18, 0.92);
+  --chip-bg: rgba(10, 60, 44, 0.95);
+  --chip-line: rgba(167, 243, 208, 0.30);
   --link-bg-hover: rgba(16, 74, 52, 0.88);
   --hero-a: rgba(16, 185, 129, 0.22);
   --hero-b: rgba(34, 197, 94, 0.12);
+  --card-bg: rgba(10, 80, 58, 0.70);
+  --input-bg: rgba(8, 60, 44, 0.90);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --sea-ink: #d1fae5;
-    --sea-ink-soft: #a7f3d0;
+    --sea-ink: #ecfdf5;
+    --sea-ink-soft: #bbf7d0;
     --lagoon: #86efac;
-    --lagoon-deep: #4ade80;
-    --lagoon-deep-hover: #22c55e;
+    --lagoon-deep: #34d399;
+    --lagoon-deep-hover: #10b981;
     --palm: #10b981;
     --sand: #064e3b;
     --foam: #022c1f;
     --gold: #fcd34d;
-    --surface: rgba(6, 78, 59, 0.82);
-    --surface-strong: rgba(5, 46, 34, 0.94);
-    --line: rgba(167, 243, 208, 0.18);
-    --inset-glint: rgba(134, 239, 172, 0.12);
-    --kicker: #86efac;
-    --bg-base: #0f2f26;
-    --header-bg: rgba(6, 22, 18, 0.88);
-    --chip-bg: rgba(5, 46, 34, 0.92);
-    --chip-line: rgba(167, 243, 208, 0.24);
+    --surface: rgba(15, 90, 68, 0.75);
+    --surface-strong: rgba(10, 60, 44, 0.92);
+    --line: rgba(167, 243, 208, 0.28);
+    --inset-glint: rgba(134, 239, 172, 0.18);
+    --kicker: #6ee7b7;
+    --bg-base: #0a1f1a;
+    --header-bg: rgba(6, 22, 18, 0.92);
+    --chip-bg: rgba(10, 60, 44, 0.95);
+    --chip-line: rgba(167, 243, 208, 0.30);
     --link-bg-hover: rgba(16, 74, 52, 0.88);
     --hero-a: rgba(16, 185, 129, 0.22);
     --hero-b: rgba(34, 197, 94, 0.12);
+    --card-bg: rgba(10, 80, 58, 0.70);
+    --input-bg: rgba(8, 60, 44, 0.90);
   }
 }
 

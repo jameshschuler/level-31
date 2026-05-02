@@ -74,7 +74,7 @@ function AboutPage() {
           </p>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-(--line) bg-white/60 p-5">
+            <div className="rounded-xl border border-(--line) bg-(--card-bg) p-5">
               <div className="mb-3 flex items-center gap-2">
                 <Footprints size={16} className="text-(--lagoon-deep)" />
                 <span className="font-semibold text-(--sea-ink)">
@@ -90,7 +90,7 @@ function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-(--line) bg-white/60 p-5">
+            <div className="rounded-xl border border-(--line) bg-(--card-bg) p-5">
               <div className="mb-3 flex items-center gap-2">
                 <Star size={16} className="text-amber-500" />
                 <span className="font-semibold text-(--sea-ink)">

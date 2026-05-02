@@ -36,7 +36,7 @@ function TeamsPage() {
               className="island-shell feature-card rounded-2xl p-5"
             >
               <div className="mb-4 flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--line)] bg-white/70 text-[var(--lagoon-deep)]">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--card-bg)] text-[var(--lagoon-deep)]">
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>
@@ -55,7 +55,7 @@ function TeamsPage() {
                   {team.players.map((player) => (
                     <div
                       key={player.id}
-                      className="rounded-lg border border-[var(--line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)]"
+                      className="rounded-lg border border-[var(--line)] bg-[var(--card-bg)] px-3 py-2 text-sm text-[var(--sea-ink)]"
                     >
                       {player.displayName}
                     </div>

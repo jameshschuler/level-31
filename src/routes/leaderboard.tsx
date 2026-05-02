@@ -74,11 +74,11 @@ function TeamLeaderboard({ rows }: { rows: TeamLeaderboardRow[] }) {
         {rows.map((row, idx) => (
           <article
             key={row.teamId}
-            className="rounded-xl border border-(--line) bg-white/75 p-5"
+            className="rounded-xl border border-(--line) bg-(--card-bg) p-5"
           >
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-(--line) bg-white/80">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-(--line) bg-(--card-bg)">
                   <DynamicIcon
                     name={row.teamIcon}
                     className="h-4 w-4 text-(--lagoon-deep)"
@@ -136,7 +136,7 @@ function TeamLeaderboard({ rows }: { rows: TeamLeaderboardRow[] }) {
                 </td>
                 <td className="py-4 pr-6">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-(--line) bg-white/70">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-(--line) bg-(--card-bg)">
                       <DynamicIcon
                         name={row.teamIcon}
                         className="h-4 w-4 text-(--lagoon-deep)"
@@ -205,7 +205,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
           return (
             <article
               key={row.playerId}
-              className="rounded-xl border border-(--line) bg-white/75 p-5"
+              className="rounded-xl border border-(--line) bg-(--card-bg) p-5"
             >
               <div className="mb-3 flex items-start justify-between gap-3">
                 <div>
@@ -222,7 +222,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
               </div>
 
               <div className="mb-3 flex items-center gap-2 text-sm text-(--sea-ink-soft)">
-                <div className="flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-white/80">
+                <div className="flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-(--card-bg)">
                   <DynamicIcon
                     name={row.teamIcon}
                     className="h-3.5 w-3.5 text-(--lagoon-deep)"
@@ -252,7 +252,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                         .map((date) => (
                           <div
                             key={date}
-                            className="rounded-lg border border-(--line) bg-white/70 px-2.5 py-1 text-center"
+                            className="rounded-lg border border-(--line) bg-(--card-bg) px-2.5 py-1 text-center"
                           >
                             <p className="m-0 text-[10px] font-semibold text-(--sea-ink-soft)">
                               {date.slice(5)}
@@ -302,7 +302,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                     </td>
                     <td className="py-4 pr-6">
                       <div className="flex items-center gap-2">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-white/70">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-(--card-bg)">
                           <DynamicIcon
                             name={row.teamIcon}
                             className="h-3.5 w-3.5 text-(--lagoon-deep)"
@@ -346,7 +346,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                             .map((date) => (
                               <div
                                 key={date}
-                                className="rounded-lg border border-(--line) bg-white/70 px-3 py-1.5 text-center"
+                                className="rounded-lg border border-(--line) bg-(--card-bg) px-3 py-1.5 text-center"
                               >
                                 <p className="m-0 text-[10px] font-semibold text-(--sea-ink-soft)">
                                   {date.slice(5)}
@@ -425,7 +425,7 @@ function LeaderboardPage() {
                 className={[
                   "relative -mb-px flex-1 rounded-t-lg border border-b-0 px-4 py-2.5 text-sm font-semibold capitalize transition sm:flex-none sm:px-5",
                   activeTab === tab
-                    ? "border-(--line) bg-white/80 text-(--lagoon-deep)"
+                    ? "border-(--line) bg-(--card-bg) text-(--lagoon-deep)"
                     : "border-transparent text-(--sea-ink-soft) hover:text-(--sea-ink)",
                 ].join(" ")}
               >
@@ -445,7 +445,7 @@ function LeaderboardPage() {
                     "shrink-0 rounded-full border px-4 py-1.5 text-sm font-semibold whitespace-nowrap transition hover:-translate-y-0.5",
                     (currentMonth ?? "") === m
                       ? "border-(--lagoon-deep)/40 bg-(--lagoon-deep)/10 text-(--lagoon-deep)"
-                      : "border-(--line) bg-white/80 text-(--sea-ink-soft) hover:text-(--sea-ink)",
+                      : "border-(--line) bg-transparent text-(--sea-ink-soft) hover:text-(--sea-ink)",
                   ].join(" ")}
                 >
                   {MonthLabel(m)}

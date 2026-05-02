@@ -54,7 +54,7 @@ function AdminPage() {
     <main className="page-wrap px-4 pb-8 pt-14">
       <section className="island-shell mt-8 rounded-2xl p-6 sm:p-8">
         <div className="mb-5 flex items-center gap-3">
-          <div className="rounded-xl border border-[var(--line)] bg-white/70 p-2">
+          <div className="rounded-xl border border-[var(--line)] bg-[var(--card-bg)] p-2">
             <Upload className="h-5 w-5 text-[var(--lagoon-deep)]" />
           </div>
           <div>
@@ -72,7 +72,7 @@ function AdminPage() {
               type="password"
               value={uploadPassword}
               onChange={(event) => setUploadPassword(event.target.value)}
-              className="mt-2 block w-full rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2 text-[var(--sea-ink)]"
+              className="mt-2 block w-full rounded-xl border border-[var(--line)] bg-[var(--input-bg)] px-3 py-2 text-[var(--sea-ink)]"
               required
             />
           </label>
@@ -88,7 +88,7 @@ function AdminPage() {
                   setCsvFile(file);
                 }
               }}
-              className="mt-2 block w-full rounded-xl border border-[var(--line)] bg-white/80 px-3 py-2 text-[var(--sea-ink)]"
+              className="mt-2 block w-full rounded-xl border border-[var(--line)] bg-[var(--input-bg)] px-3 py-2 text-[var(--sea-ink)]"
               required
             />
           </label>
