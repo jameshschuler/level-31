@@ -40,20 +40,20 @@ export default function Header() {
             Leaderboard
           </Link>
           <Link
-            to="/teams"
-            search={{}}
-            className="nav-link"
-            activeProps={{ className: "nav-link is-active" }}
-          >
-            Teams
-          </Link>
-          <Link
             to="/scores"
             search={{}}
             className="nav-link"
             activeProps={{ className: "nav-link is-active" }}
           >
             Scores
+          </Link>
+          <Link
+            to="/teams"
+            search={{}}
+            className="nav-link"
+            activeProps={{ className: "nav-link is-active" }}
+          >
+            Teams
           </Link>
           <Link
             to="/about"

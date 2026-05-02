@@ -85,8 +85,9 @@ function addDays(date: Date, days: number): Date {
 
 function TeamIcon({ iconName }: { iconName: string }) {
   const Icon =
-    (LucideIcons[iconName as keyof typeof LucideIcons] as LucideIcon | undefined) ??
-    LucideIcons.Users;
+    (LucideIcons[iconName as keyof typeof LucideIcons] as
+      | LucideIcon
+      | undefined) ?? LucideIcons.Users;
   return <Icon className="h-4 w-4" />;
 }
 
@@ -96,15 +97,19 @@ function HomePage() {
   const navigate = useNavigate({ from: "/" });
   const today = new Date();
   const currentWeekStart = startOfWeekMonday(today);
+  const defaultWeekStart = startOfWeekMonday(new Date(2026, 4, 1)); // May 1, 2026
   const requestedWeekDate = search.week ? parseIsoDate(search.week) : null;
   const weekStart = requestedWeekDate
     ? startOfWeekMonday(requestedWeekDate)
-    : currentWeekStart;
+    : defaultWeekStart;
   const weekEnd = addDays(weekStart, 6);
-  const isCurrentWeek = formatIsoDate(weekStart) === formatIsoDate(currentWeekStart);
+  const isCurrentWeek =
+    formatIsoDate(weekStart) === formatIsoDate(currentWeekStart);
   const todayIso = formatIsoDate(today);
 
-  const scoresByDate = new Map(dailyScores.map((day) => [day.stepDate, day.rows]));
+  const scoresByDate = new Map(
+    dailyScores.map((day) => [day.stepDate, day.rows]),
+  );
 
   const dayCards: DayCard[] = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(weekStart);
@@ -136,8 +141,8 @@ function HomePage() {
   }
 
   return (
-    <main className="page-wrap px-4 pb-16 pt-14">
-      <section className="island-shell rounded-2xl p-6 sm:p-8">
+    <main className="px-4 pb-16 pt-14">
+      <section className="page-wrap island-shell rounded-2xl p-6 sm:p-8">
         <p className="island-kicker mb-3">Weekly Snapshot</p>
         <h1 className="display-title mb-5 text-4xl font-bold text-(--sea-ink) sm:text-5xl">
           Level 31 Week View
@@ -184,7 +189,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <section className="mx-auto mt-8 grid w-full max-w-screen-2xl gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {dayCards.map((day) => (
           <article
             key={day.stepDate}
@@ -229,11 +234,13 @@ function HomePage() {
                       </p>
                     </div>
                     <p className="m-0 mt-2 text-sm text-(--sea-ink-soft)">
-                      Steps {row.teamSteps.toLocaleString()} / {row.requiredSteps.toLocaleString()} req
+                      Steps {row.teamSteps.toLocaleString()} /{" "}
+                      {row.requiredSteps.toLocaleString()} req
                     </p>
                     <p className="m-0 text-sm leading-6 text-(--sea-ink-soft)">
-                      Bonus {row.teamSteps.toLocaleString()} / {row.doubleMilestoneSteps.toLocaleString()} double{" "}
-                      ({row.hitDoubleMilestone ? "Hit" : "Miss"})
+                      Bonus {row.teamSteps.toLocaleString()} /{" "}
+                      {row.doubleMilestoneSteps.toLocaleString()} double (
+                      {row.hitDoubleMilestone ? "Hit" : "Miss"})
                     </p>
                   </div>
                 ))}

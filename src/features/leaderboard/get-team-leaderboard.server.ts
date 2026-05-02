@@ -85,16 +85,20 @@ export async function getTeamLeaderboard(
 
   const stepsByTeam = new Map(stepRows.map((r) => [r.teamId, r.totalSteps]));
 
-  return scoreRows.map((row) => ({
-    teamId: row.teamId,
-    teamName: row.teamName,
-    teamIcon: row.teamIcon,
-    totalPoints: row.totalPoints,
-    daysMetRequirement: row.daysMetRequirement,
-    daysHitDoubleMilestone: row.daysHitDoubleMilestone,
-    totalDays: row.totalDays,
-    totalSteps: stepsByTeam.get(row.teamId) ?? 0,
-  }));
+  return scoreRows
+    .map((row) => ({
+      teamId: row.teamId,
+      teamName: row.teamName,
+      teamIcon: row.teamIcon,
+      totalPoints: row.totalPoints,
+      daysMetRequirement: row.daysMetRequirement,
+      daysHitDoubleMilestone: row.daysHitDoubleMilestone,
+      totalDays: row.totalDays,
+      totalSteps: stepsByTeam.get(row.teamId) ?? 0,
+    }))
+    .sort(
+      (a, b) => b.totalPoints - a.totalPoints || b.totalSteps - a.totalSteps,
+    );
 }
 
 export type PlayerDailyEntry = { stepDate: string; steps: number };

@@ -37,7 +37,11 @@ export async function getTeamDailyScores() {
     })
     .from(teamDailyScores)
     .innerJoin(teams, eq(teamDailyScores.teamId, teams.id))
-    .orderBy(asc(teamDailyScores.stepDate), desc(teamDailyScores.totalPoints));
+    .orderBy(
+      asc(teamDailyScores.stepDate),
+      desc(teamDailyScores.totalPoints),
+      desc(teamDailyScores.teamSteps),
+    );
 
   const grouped = new Map<string, TeamDailyScoreResult["rows"]>();
 
