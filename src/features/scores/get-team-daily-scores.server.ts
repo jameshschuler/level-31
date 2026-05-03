@@ -1,6 +1,4 @@
-import { asc, desc, eq } from "drizzle-orm";
-import { db } from "#/db/client";
-import { teamDailyScores, teams } from "#/db/schema";
+import { getLatestTeamDailyScoreRows } from "#/features/steps/get-latest-step-snapshots.server";
 
 export type TeamDailyScoreResult = {
   stepDate: string;
@@ -20,28 +18,7 @@ export type TeamDailyScoreResult = {
 };
 
 export async function getTeamDailyScores() {
-  const scoreRows = await db
-    .select({
-      stepDate: teamDailyScores.stepDate,
-      teamId: teamDailyScores.teamId,
-      teamName: teams.name,
-      teamIcon: teams.icon,
-      teamSteps: teamDailyScores.teamSteps,
-      requiredSteps: teamDailyScores.requiredSteps,
-      doubleMilestoneSteps: teamDailyScores.doubleMilestoneSteps,
-      totalPoints: teamDailyScores.totalPoints,
-      basePoints: teamDailyScores.basePoints,
-      bonusPoints: teamDailyScores.bonusPoints,
-      metRequirement: teamDailyScores.metRequirement,
-      hitDoubleMilestone: teamDailyScores.hitDoubleMilestone,
-    })
-    .from(teamDailyScores)
-    .innerJoin(teams, eq(teamDailyScores.teamId, teams.id))
-    .orderBy(
-      asc(teamDailyScores.stepDate),
-      desc(teamDailyScores.totalPoints),
-      desc(teamDailyScores.teamSteps),
-    );
+  const scoreRows = await getLatestTeamDailyScoreRows();
 
   const grouped = new Map<string, TeamDailyScoreResult["rows"]>();
 
@@ -63,8 +40,12 @@ export async function getTeamDailyScores() {
     grouped.set(row.stepDate, existing);
   }
 
-  return Array.from(grouped.entries()).map(([stepDate, rows]) => ({
-    stepDate,
-    rows,
-  }));
+  return Array.from(grouped.entries())
+    .map(([stepDate, rows]) => ({
+      stepDate,
+      rows: rows.sort(
+        (a, b) => b.totalPoints - a.totalPoints || b.teamSteps - a.teamSteps,
+      ),
+    }))
+    .sort((a, b) => b.stepDate.localeCompare(a.stepDate));
 }

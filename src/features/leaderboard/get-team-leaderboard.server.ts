@@ -1,13 +1,10 @@
-import { desc, eq, like, sql } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 import { db } from "#/db/client";
+import { stepReports } from "#/db/schema";
 import {
-  playerDailySteps,
-  playerStepSummaries,
-  players,
-  stepReports,
-  teamDailyScores,
-  teams,
-} from "#/db/schema";
+  getLatestPlayerDailyStepRows,
+  getLatestTeamDailyScoreRows,
+} from "#/features/steps/get-latest-step-snapshots.server";
 
 export type TeamLeaderboardRow = {
   teamId: number;
@@ -21,10 +18,7 @@ export type TeamLeaderboardRow = {
 };
 
 export async function getAvailableMonths(): Promise<string[]> {
-  const rows = await db
-    .selectDistinct({ stepDate: teamDailyScores.stepDate })
-    .from(teamDailyScores)
-    .orderBy(teamDailyScores.stepDate);
+  const rows = await getLatestTeamDailyScoreRows();
   const months = [...new Set(rows.map((r) => r.stepDate.slice(0, 7)))];
   return months.sort().reverse();
 }
@@ -41,64 +35,42 @@ export async function getLastUpdated(): Promise<string | null> {
 export async function getTeamLeaderboard(
   month?: string,
 ): Promise<TeamLeaderboardRow[]> {
-  const query = db
-    .select({
-      teamId: teamDailyScores.teamId,
-      teamName: teams.name,
-      teamIcon: teams.icon,
-      totalPoints: sql<number>`sum(${teamDailyScores.totalPoints})`,
-      daysMetRequirement: sql<number>`sum(case when ${teamDailyScores.metRequirement} then 1 else 0 end)`,
-      daysHitDoubleMilestone: sql<number>`sum(case when ${teamDailyScores.hitDoubleMilestone} then 1 else 0 end)`,
-      totalDays: sql<number>`count(distinct ${teamDailyScores.stepDate})`,
-    })
-    .from(teamDailyScores)
-    .innerJoin(teams, eq(teamDailyScores.teamId, teams.id))
-    .$dynamic();
+  const [scoreRows, playerRows] = await Promise.all([
+    getLatestTeamDailyScoreRows(month),
+    getLatestPlayerDailyStepRows(month),
+  ]);
 
-  const withFilter = month
-    ? query.where(like(teamDailyScores.stepDate, `${month}%`))
-    : query;
+  const teamsById = new Map<number, TeamLeaderboardRow>();
 
-  const scoreRows = await withFilter
-    .groupBy(teamDailyScores.teamId)
-    .orderBy(desc(sql`sum(${teamDailyScores.totalPoints})`));
-
-  // Get total steps from player summaries (filtered by same month via playerDailySteps dates)
-  const stepQuery = db
-    .select({
-      teamId: players.teamId,
-      totalSteps: sql<number>`sum(${playerStepSummaries.totalSteps})`,
-    })
-    .from(playerStepSummaries)
-    .innerJoin(players, eq(playerStepSummaries.playerId, players.id))
-    .$dynamic();
-
-  const stepRows = month
-    ? await stepQuery
-        .innerJoin(
-          playerDailySteps,
-          eq(playerDailySteps.reportId, playerStepSummaries.reportId),
-        )
-        .where(like(playerDailySteps.stepDate, `${month}%`))
-        .groupBy(players.teamId)
-    : await stepQuery.groupBy(players.teamId);
-
-  const stepsByTeam = new Map(stepRows.map((r) => [r.teamId, r.totalSteps]));
-
-  return scoreRows
-    .map((row) => ({
+  for (const row of scoreRows) {
+    const existing = teamsById.get(row.teamId) ?? {
       teamId: row.teamId,
       teamName: row.teamName,
       teamIcon: row.teamIcon,
-      totalPoints: row.totalPoints,
-      daysMetRequirement: row.daysMetRequirement,
-      daysHitDoubleMilestone: row.daysHitDoubleMilestone,
-      totalDays: row.totalDays,
-      totalSteps: stepsByTeam.get(row.teamId) ?? 0,
-    }))
-    .sort(
-      (a, b) => b.totalPoints - a.totalPoints || b.totalSteps - a.totalSteps,
-    );
+      totalPoints: 0,
+      daysMetRequirement: 0,
+      daysHitDoubleMilestone: 0,
+      totalDays: 0,
+      totalSteps: 0,
+    };
+
+    existing.totalPoints += row.totalPoints;
+    existing.daysMetRequirement += row.metRequirement ? 1 : 0;
+    existing.daysHitDoubleMilestone += row.hitDoubleMilestone ? 1 : 0;
+    existing.totalDays += 1;
+    teamsById.set(row.teamId, existing);
+  }
+
+  for (const row of playerRows) {
+    const existing = teamsById.get(row.teamId);
+    if (existing) {
+      existing.totalSteps += row.steps;
+    }
+  }
+
+  return Array.from(teamsById.values()).sort(
+    (a, b) => b.totalPoints - a.totalPoints || b.totalSteps - a.totalSteps,
+  );
 }
 
 export type PlayerDailyEntry = { stepDate: string; steps: number };
@@ -117,23 +89,7 @@ export type PlayerLeaderboardRow = {
 export async function getPlayerLeaderboard(
   month?: string,
 ): Promise<PlayerLeaderboardRow[]> {
-  const dailyQuery = db
-    .select({
-      playerId: playerDailySteps.playerId,
-      stepDate: playerDailySteps.stepDate,
-      steps: playerDailySteps.steps,
-    })
-    .from(playerDailySteps)
-    .$dynamic();
-
-  const dailyRows = month
-    ? await dailyQuery
-        .where(like(playerDailySteps.stepDate, `${month}%`))
-        .orderBy(playerDailySteps.playerId, playerDailySteps.stepDate)
-    : await dailyQuery.orderBy(
-        playerDailySteps.playerId,
-        playerDailySteps.stepDate,
-      );
+  const dailyRows = await getLatestPlayerDailyStepRows(month);
 
   const dailyByPlayer = new Map<number, PlayerDailyEntry[]>();
   for (const row of dailyRows) {
@@ -151,20 +107,25 @@ export async function getPlayerLeaderboard(
     );
   }
 
-  const playerRows = await db
-    .select({
-      playerId: players.id,
-      playerName: players.displayName,
-      teamId: players.teamId,
-      teamName: teams.name,
-      teamIcon: teams.icon,
-    })
-    .from(players)
-    .innerJoin(teams, eq(players.teamId, teams.id));
+  const playerRows = Array.from(
+    new Map(
+      dailyRows.map((row) => [
+        row.playerId,
+        {
+          playerId: row.playerId,
+          playerName: row.playerName,
+          teamId: row.teamId,
+          teamName: row.teamName,
+          teamIcon: row.teamIcon,
+        },
+      ]),
+    ).values(),
+  );
 
   return playerRows
     .map((row) => {
       const daily = dailyByPlayer.get(row.playerId) ?? [];
+      daily.sort((a, b) => a.stepDate.localeCompare(b.stepDate));
       const totalSteps = totalStepsByPlayer.get(row.playerId) ?? 0;
       const avgDailySteps =
         daily.length > 0 ? Math.round(totalSteps / daily.length) : 0;

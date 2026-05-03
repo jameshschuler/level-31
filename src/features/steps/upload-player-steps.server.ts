@@ -1,4 +1,5 @@
 import Papa from "papaparse";
+import { and, inArray } from "drizzle-orm";
 import { db } from "#/db/client";
 import {
   playerDailySteps,
@@ -175,9 +176,11 @@ export async function importPlayerStepsCsv(input: UploadPlayerStepsCsvInput) {
     const reportByTeamId = new Map<number, number>();
     const teamDailyTotals = new Map<number, Map<string, number>>();
 
-    let importedPlayers = 0;
-    let dailyRecords = 0;
     const unmatchedNames: string[] = [];
+    const matchedRows: Array<{
+      row: CsvRow;
+      matchedPlayer: (typeof allPlayers)[number];
+    }> = [];
 
     for (const row of rows) {
       const displayName = row[HEADER_MAP.name]?.trim();
@@ -194,6 +197,44 @@ export async function importPlayerStepsCsv(input: UploadPlayerStepsCsvInput) {
         continue;
       }
 
+      matchedRows.push({ row, matchedPlayer });
+    }
+
+    if (matchedRows.length === 0) {
+      throw new Error(
+        "No players were matched. Ensure CSV Name values match existing player names in the database.",
+      );
+    }
+
+    const matchedPlayerIds = [
+      ...new Set(matchedRows.map(({ matchedPlayer }) => matchedPlayer.id)),
+    ];
+    const matchedTeamIds = [
+      ...new Set(matchedRows.map(({ matchedPlayer }) => matchedPlayer.teamId)),
+    ];
+
+    await tx
+      .delete(playerDailySteps)
+      .where(
+        and(
+          inArray(playerDailySteps.playerId, matchedPlayerIds),
+          inArray(playerDailySteps.stepDate, dateHeaders),
+        ),
+      );
+
+    await tx
+      .delete(teamDailyScores)
+      .where(
+        and(
+          inArray(teamDailyScores.teamId, matchedTeamIds),
+          inArray(teamDailyScores.stepDate, dateHeaders),
+        ),
+      );
+
+    let importedPlayers = 0;
+    let dailyRecords = 0;
+
+    for (const { row, matchedPlayer } of matchedRows) {
       let reportId = reportByTeamId.get(matchedPlayer.teamId);
 
       if (!reportId) {
@@ -263,12 +304,6 @@ export async function importPlayerStepsCsv(input: UploadPlayerStepsCsvInput) {
 
       importedPlayers += 1;
       dailyRecords += dailyRows.length;
-    }
-
-    if (importedPlayers === 0) {
-      throw new Error(
-        "No players were matched. Ensure CSV Name values match existing player names in the database.",
-      );
     }
 
     for (const [teamId, reportId] of reportByTeamId.entries()) {
