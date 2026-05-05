@@ -97,7 +97,7 @@ function HomePage() {
   const navigate = useNavigate({ from: "/" });
   const today = new Date();
   const currentWeekStart = startOfWeekMonday(today);
-  const defaultWeekStart = startOfWeekMonday(new Date(2026, 4, 1)); // May 1, 2026
+  const defaultWeekStart = currentWeekStart;
   const requestedWeekDate = search.week ? parseIsoDate(search.week) : null;
   const weekStart = requestedWeekDate
     ? startOfWeekMonday(requestedWeekDate)
@@ -130,12 +130,12 @@ function HomePage() {
   function setWeek(date: Date) {
     const monday = startOfWeekMonday(date);
     const mondayIso = formatIsoDate(monday);
-    const currentMondayIso = formatIsoDate(currentWeekStart);
+    const defaultMondayIso = formatIsoDate(defaultWeekStart);
 
     void navigate({
       search: (prev) => ({
         ...prev,
-        week: mondayIso === currentMondayIso ? undefined : mondayIso,
+        week: mondayIso === defaultMondayIso ? undefined : mondayIso,
       }),
     });
   }
@@ -172,7 +172,7 @@ function HomePage() {
             disabled={isCurrentWeek}
             className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-4 py-2.5 text-sm font-semibold text-(--lagoon-deep) transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
-            This Week
+            Current Week
           </button>
           <p className="m-0 w-full text-sm text-(--sea-ink-soft) sm:w-auto">
             {weekStart.toLocaleDateString("en-US", {
