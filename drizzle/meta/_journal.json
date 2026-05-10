@@ -15,6 +15,13 @@
       "when": 1776915921575,
       "tag": "0001_low_lockjaw",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776915921576,
+      "tag": "0002_kevin_stevenson",
+      "breakpoints": true
     }
   ]
 }

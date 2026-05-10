@@ -156,16 +156,16 @@ export async function importPlayerStepsCsv(input: UploadPlayerStepsCsvInput) {
       })
       .from(players);
 
-    const playerByNormalizedName = new Map<
+    const playersByNormalizedName = new Map<
       string,
-      (typeof allPlayers)[number]
+      Array<(typeof allPlayers)[number]>
     >();
 
     for (const player of allPlayers) {
       const key = normalizeName(player.displayName);
-      if (!playerByNormalizedName.has(key)) {
-        playerByNormalizedName.set(key, player);
-      }
+      const existing = playersByNormalizedName.get(key) ?? [];
+      existing.push(player);
+      playersByNormalizedName.set(key, existing);
     }
 
     const teamRows = await tx
@@ -188,16 +188,18 @@ export async function importPlayerStepsCsv(input: UploadPlayerStepsCsvInput) {
         continue;
       }
 
-      const matchedPlayer = playerByNormalizedName.get(
+      const matchedPlayers = playersByNormalizedName.get(
         normalizeName(displayName),
       );
 
-      if (!matchedPlayer) {
+      if (!matchedPlayers || matchedPlayers.length === 0) {
         unmatchedNames.push(displayName);
         continue;
       }
 
-      matchedRows.push({ row, matchedPlayer });
+      for (const matchedPlayer of matchedPlayers) {
+        matchedRows.push({ row, matchedPlayer });
+      }
     }
 
     if (matchedRows.length === 0) {

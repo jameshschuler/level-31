@@ -76,7 +76,7 @@ function AboutPage() {
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-(--line) bg-(--card-bg) p-5">
               <div className="mb-3 flex items-center gap-2">
-                <Footprints size={16} className="text-(--lagoon-deep)" />
+                <Footprints className="h-5 w-5 text-(--lagoon-deep) sm:h-4 sm:w-4" />
                 <span className="font-semibold text-(--sea-ink)">
                   Base Points — Daily Requirement
                 </span>
@@ -92,7 +92,7 @@ function AboutPage() {
 
             <div className="rounded-xl border border-(--line) bg-(--card-bg) p-5">
               <div className="mb-3 flex items-center gap-2">
-                <Star size={16} className="text-amber-500" />
+                <Star className="h-5 w-5 text-amber-500 sm:h-4 sm:w-4" />
                 <span className="font-semibold text-(--sea-ink)">
                   Bonus Points — Double Milestone
                 </span>

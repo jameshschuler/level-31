@@ -1,6 +1,6 @@
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "#/db/client";
-import { stepReports } from "#/db/schema";
+import { players, stepReports, teams } from "#/db/schema";
 import {
   getLatestPlayerDailyStepRows,
   getLatestTeamDailyScoreRows,
@@ -75,71 +75,116 @@ export async function getTeamLeaderboard(
 
 export type PlayerDailyEntry = { stepDate: string; steps: number };
 
-export type PlayerLeaderboardRow = {
-  playerId: number;
-  playerName: string;
+export type PlayerTeamEntry = {
   teamId: number;
   teamName: string;
   teamIcon: string;
+};
+
+export type PlayerLeaderboardRow = {
+  playerKey: string;
+  playerName: string;
+  teams: PlayerTeamEntry[];
   totalSteps: number;
   avgDailySteps: number;
   dailySteps: PlayerDailyEntry[];
 };
 
+function normalizePlayerName(name: string): string {
+  return name.trim().toLowerCase();
+}
+
 export async function getPlayerLeaderboard(
   month?: string,
 ): Promise<PlayerLeaderboardRow[]> {
-  const dailyRows = await getLatestPlayerDailyStepRows(month);
+  const [dailyRows, membershipRows] = await Promise.all([
+    getLatestPlayerDailyStepRows(month),
+    db
+      .select({
+        playerName: players.displayName,
+        teamId: teams.id,
+        teamName: teams.name,
+        teamIcon: teams.icon,
+      })
+      .from(players)
+      .innerJoin(teams, eq(players.teamId, teams.id)),
+  ]);
 
-  const dailyByPlayer = new Map<number, PlayerDailyEntry[]>();
+  const membershipsByPlayerKey = new Map<
+    string,
+    Map<number, PlayerTeamEntry>
+  >();
+  for (const row of membershipRows) {
+    const playerKey = normalizePlayerName(row.playerName);
+    const existing = membershipsByPlayerKey.get(playerKey) ?? new Map();
+    existing.set(row.teamId, {
+      teamId: row.teamId,
+      teamName: row.teamName,
+      teamIcon: row.teamIcon,
+    });
+    membershipsByPlayerKey.set(playerKey, existing);
+  }
+
+  const groups = new Map<
+    string,
+    {
+      playerName: string;
+      dailyByDate: Map<string, number>;
+      teamsById: Map<number, PlayerTeamEntry>;
+    }
+  >();
+
   for (const row of dailyRows) {
-    const existing = dailyByPlayer.get(row.playerId) ?? [];
-    existing.push({ stepDate: row.stepDate, steps: row.steps ?? 0 });
-    dailyByPlayer.set(row.playerId, existing);
-  }
+    const playerKey = normalizePlayerName(row.playerName);
+    const existing = groups.get(playerKey) ?? {
+      playerName: row.playerName,
+      dailyByDate: new Map<string, number>(),
+      teamsById: new Map<number, PlayerTeamEntry>(),
+    };
 
-  // Build total steps per player from daily rows (already month-filtered)
-  const totalStepsByPlayer = new Map<number, number>();
-  for (const [playerId, entries] of dailyByPlayer) {
-    totalStepsByPlayer.set(
-      playerId,
-      entries.reduce((sum, e) => sum + e.steps, 0),
+    existing.teamsById.set(row.teamId, {
+      teamId: row.teamId,
+      teamName: row.teamName,
+      teamIcon: row.teamIcon,
+    });
+
+    const currentDateSteps = existing.dailyByDate.get(row.stepDate) ?? 0;
+    // Multiple team memberships can produce duplicate day rows for one person.
+    // Keep one day value so player totals are not multiplied by team count.
+    existing.dailyByDate.set(
+      row.stepDate,
+      Math.max(currentDateSteps, row.steps ?? 0),
     );
+
+    groups.set(playerKey, existing);
   }
 
-  const playerRows = Array.from(
-    new Map(
-      dailyRows.map((row) => [
-        row.playerId,
-        {
-          playerId: row.playerId,
-          playerName: row.playerName,
-          teamId: row.teamId,
-          teamName: row.teamName,
-          teamIcon: row.teamIcon,
-        },
-      ]),
-    ).values(),
-  );
+  return Array.from(groups.entries())
+    .map(([playerKey, group]) => {
+      const daily = Array.from(group.dailyByDate.entries())
+        .map(([stepDate, steps]) => ({ stepDate, steps }))
+        .sort((a, b) => a.stepDate.localeCompare(b.stepDate));
 
-  return playerRows
-    .map((row) => {
-      const daily = dailyByPlayer.get(row.playerId) ?? [];
-      daily.sort((a, b) => a.stepDate.localeCompare(b.stepDate));
-      const totalSteps = totalStepsByPlayer.get(row.playerId) ?? 0;
+      const totalSteps = daily.reduce((sum, entry) => sum + entry.steps, 0);
       const avgDailySteps =
         daily.length > 0 ? Math.round(totalSteps / daily.length) : 0;
+      const teams = Array.from(
+        membershipsByPlayerKey.get(playerKey) ?? group.teamsById,
+      ).map(([, team]) => team);
+      teams.sort((a, b) => a.teamName.localeCompare(b.teamName));
+
       return {
-        playerId: row.playerId,
-        playerName: row.playerName,
-        teamId: row.teamId,
-        teamName: row.teamName,
-        teamIcon: row.teamIcon,
+        playerKey,
+        playerName: group.playerName,
+        teams,
         totalSteps,
         avgDailySteps,
         dailySteps: daily,
       };
     })
     .filter((r) => r.totalSteps > 0)
-    .sort((a, b) => b.totalSteps - a.totalSteps);
+    .sort(
+      (a, b) =>
+        b.totalSteps - a.totalSteps || a.playerName.localeCompare(b.playerName),
+    );
 }

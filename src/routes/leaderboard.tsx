@@ -179,7 +179,7 @@ function TeamLeaderboard({ rows }: { rows: TeamLeaderboardRow[] }) {
 }
 
 function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
-  const [expanded, setExpanded] = useState<number | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   if (rows.length === 0) {
     return (
@@ -197,14 +197,14 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
     <>
       <div className="space-y-4 sm:hidden">
         {rows.map((row, idx) => {
-          const isExpanded = expanded === row.playerId;
+          const isExpanded = expanded === row.playerKey;
           const stepMap = new Map(
             row.dailySteps.map((d) => [d.stepDate, d.steps]),
           );
 
           return (
             <article
-              key={row.playerId}
+              key={row.playerKey}
               className="rounded-xl border border-(--line) bg-(--card-bg) p-5"
             >
               <div className="mb-3 flex items-start justify-between gap-3">
@@ -221,14 +221,19 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                 </p>
               </div>
 
-              <div className="mb-3 flex items-center gap-2 text-sm text-(--sea-ink-soft)">
-                <div className="flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-(--card-bg)">
-                  <DynamicIcon
-                    name={row.teamIcon}
-                    className="h-3.5 w-3.5 text-(--lagoon-deep)"
-                  />
-                </div>
-                <span>{row.teamName}</span>
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-sm text-(--sea-ink-soft)">
+                {row.teams.map((team) => (
+                  <span
+                    key={`${row.playerKey}-${team.teamId}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-(--line) bg-(--card-bg) px-2 py-0.5"
+                  >
+                    <DynamicIcon
+                      name={team.teamIcon}
+                      className="h-3.5 w-3.5 text-(--lagoon-deep)"
+                    />
+                    <span>{team.teamName}</span>
+                  </span>
+                ))}
                 <span className="ml-auto text-(--sea-ink)">
                   Avg {row.avgDailySteps.toLocaleString()}/day
                 </span>
@@ -238,7 +243,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                 <div>
                   <button
                     onClick={() =>
-                      setExpanded(isExpanded ? null : row.playerId)
+                      setExpanded(isExpanded ? null : row.playerKey)
                     }
                     className="rounded-lg border border-(--line) px-2.5 py-1 text-xs font-semibold text-(--lagoon-deep) transition hover:bg-[rgba(79,184,178,0.1)]"
                   >
@@ -277,7 +282,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
             <tr className="border-b border-(--line) text-left text-sm font-semibold uppercase tracking-wide text-(--sea-ink-soft)">
               <th className="pb-4 pr-4">#</th>
               <th className="pb-4 pr-6">Player</th>
-              <th className="pb-4 pr-6">Team</th>
+              <th className="pb-4 pr-6">Teams</th>
               <th className="pb-4 pr-6 text-right">Total Steps</th>
               <th className="pb-4 pr-6 text-right">Avg / Day</th>
               <th className="pb-4 text-right">Daily Log</th>
@@ -285,13 +290,13 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
           </thead>
           <tbody className="divide-y divide-(--line)">
             {rows.map((row, idx) => {
-              const isExpanded = expanded === row.playerId;
+              const isExpanded = expanded === row.playerKey;
               const stepMap = new Map(
                 row.dailySteps.map((d) => [d.stepDate, d.steps]),
               );
               return (
                 <>
-                  <tr key={row.playerId}>
+                  <tr key={row.playerKey}>
                     <td className="py-4 pr-4 font-semibold text-(--sea-ink-soft)">
                       {idx + 1}
                     </td>
@@ -301,16 +306,19 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                       </span>
                     </td>
                     <td className="py-4 pr-6">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-md border border-(--line) bg-(--card-bg)">
-                          <DynamicIcon
-                            name={row.teamIcon}
-                            className="h-3.5 w-3.5 text-(--lagoon-deep)"
-                          />
-                        </div>
-                        <span className="text-(--sea-ink-soft)">
-                          {row.teamName}
-                        </span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {row.teams.map((team) => (
+                          <span
+                            key={`${row.playerKey}-${team.teamId}`}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-(--line) bg-(--card-bg) px-2 py-0.5 text-(--sea-ink-soft)"
+                          >
+                            <DynamicIcon
+                              name={team.teamIcon}
+                              className="h-3.5 w-3.5 text-(--lagoon-deep)"
+                            />
+                            <span>{team.teamName}</span>
+                          </span>
+                        ))}
                       </div>
                     </td>
                     <td className="py-4 pr-6 text-right font-semibold text-(--lagoon-deep)">
@@ -323,7 +331,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                       {row.dailySteps.length > 0 && (
                         <button
                           onClick={() =>
-                            setExpanded(isExpanded ? null : row.playerId)
+                            setExpanded(isExpanded ? null : row.playerKey)
                           }
                           className="rounded-lg border border-(--line) px-2.5 py-1 text-xs font-semibold text-(--lagoon-deep) transition hover:bg-[rgba(79,184,178,0.1)]"
                         >
@@ -335,7 +343,7 @@ function PlayerLeaderboard({ rows }: { rows: PlayerLeaderboardRow[] }) {
                     </td>
                   </tr>
                   {isExpanded && (
-                    <tr key={`${row.playerId}-daily`}>
+                    <tr key={`${row.playerKey}-daily`}>
                       <td
                         colSpan={6}
                         className="bg-[rgba(79,184,178,0.04)] px-4 pb-3 pt-1"

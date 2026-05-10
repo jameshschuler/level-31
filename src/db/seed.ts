@@ -35,6 +35,31 @@ const seedPlayers = [
     teamSlug: "rabbits",
   },
   {
+    username: "kevinstevensonbirds",
+    displayName: "Kevin Stevenson",
+    teamSlug: "birds",
+  },
+  {
+    username: "kevinstevensoncats",
+    displayName: "Kevin Stevenson",
+    teamSlug: "cats",
+  },
+  {
+    username: "kevinstevensonrabbits",
+    displayName: "Kevin Stevenson",
+    teamSlug: "rabbits",
+  },
+  {
+    username: "kevinstevensondogs",
+    displayName: "Kevin Stevenson",
+    teamSlug: "dogs",
+  },
+  {
+    username: "kevinstevensonpandas",
+    displayName: "Kevin Stevenson",
+    teamSlug: "pandas",
+  },
+  {
     username: "timothyschuler",
     displayName: "Timothy Schuler",
     teamSlug: "rabbits",
